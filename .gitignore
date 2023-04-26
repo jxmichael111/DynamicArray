@@ -1,32 +1,87 @@
-# Prerequisites
-*.d
+#include <iostream>
+using namespace std;
+class DynamicInterArray {
+    private:
+        int *data;
+        int size;
+    public:
+        DynamicInterArray(){
+            this->size = 0;
+            data = new int(0);
+        }
+        DynamicInterArray(int arr[], int size){
+            this->size = size;
+            data = new int[size];
+            for(int i = 0; i < size; i++)
+                data[i] = arr[i];
+        }
+        DynamicInterArray(const DynamicInterArray &o){
+            this->size = o.size;
+            data = new int(o.size);
+            for(int i = 0; i < o.size; i++)
+                data[i] = o.data[i];
+        }
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+        void print() const{
+            cout << "[ ";
+            for(int i = 0; i < size; i++)
+                cout << data[i] << " ";
+            cout << "]" <<endl;
+        }
+        ~DynamicInterArray(){
+            delete[] data;
+        }
+        void pushback(int value){
+            this->size = size+1;
+            int *newData = new int[size];
+            for(int i = 0; i < size-1; i++)
+                newData[i] = data[i];
+            newData[size-1] = value;
+            delete[] data;
+            data = newData;
+        }
+        void inser(int value, int pos){
+            this->size = size+1;
+            int *newData = new int[size];
+            for(int i = 0; i < size; i++){
+                if(i < pos)
+                    newData[i] = data[i];
+                else if(i == pos)
+                    newData[i] = value;
+                else
+                    newData[i] = data[i-1];
+            }
+            delete[] data;
+            data = newData;
+        }
+        void remov(int pos){
+            this->size = size-1;
+            int *newData = new int[size];
+            for(int i = 0; i < size; i++){
+                if(i < pos)
+                    newData[i] = data[i];
+                else
+                    newData[i] = data[i+1];
+            }
+            delete[] data;
+            data = newData;
+        }
+};
 
-# Precompiled Headers
-*.gch
-*.pch
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+int main()
+{
+    int arr[3] = {1,2,3};
+    DynamicInterArray A(arr,3);
+    A.print();
+    cout<<" ***PUSHBACK*** "<<endl;
+    A.pushback(7);
+    A.print();
+    cout<<" ***INSERT*** "<<endl;
+    A.inser(8,1);
+    A.print();
+    cout<<" ***REMOVE*** "<<endl;
+    A.remov(1);
+    A.print();
+    return 0;
+}
